@@ -1,0 +1,8 @@
+
+*.swp
+*.swo
+*~
+__*__
+*.jpg
+
+secret_token.py
