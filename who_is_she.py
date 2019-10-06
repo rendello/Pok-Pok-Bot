@@ -64,9 +64,12 @@ def put_figure_on_template(figure):
     figure = resize(figure, 200)
     bg = Image.open('small_template.png')
     bg.paste(figure, (30, 30), figure)
-    bg.show()
+    return bg
 
 
-figure = create_figure('img.png')
-put_figure_on_template(figure)
+def create_full_image(image_path):
+    figure = create_figure(image_path)
+    full_image = put_figure_on_template(figure)
+
+    return full_image
 

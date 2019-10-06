@@ -7,6 +7,8 @@ from PIL import Image
 
 from db_context_manager import dbopen
 
+from who_is_she import create_full_image
+
 
 def get_random_pokemon():
     '''
@@ -32,17 +34,27 @@ def get_random_pokemon():
 
 
 def fetch_image(pokemon_id):
+    def pad(pokemon_id):
+        if len(pokemon_id) < 3:
+            pokemon_id = '0' + pokemon_id
+            pokemon_id = pad(pokemon_id)
+        return pokemon_id
+
+    pokemon_id = pad(pokemon_id)
+
     url = f'https://assets.pokemon.com/assets/cms2/img/pokedex/full/{pokemon_id}.png'
 
     # The first value is the path to the image's tempfile.
     image_path = urllib.request.urlretrieve(url)[0]
-
-    i = Image.open(image_path)
-    i.show()
-
     
+    return image_path
+
+
 pokemon = get_random_pokemon()
-fetch_image(pokemon['id'])
+image_path = fetch_image(pokemon['id'])
+im = create_full_image(image_path)
+
+im.show()
 
 
 
