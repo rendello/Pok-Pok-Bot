@@ -40,6 +40,15 @@ def reduce_opacity(im, opacity):
     return im
 
 
+def opacity_friendly_paste(base_image, opacity_image, x, y):
+    base_width, base_height = base_image.size
+
+    new_image = Image.new('RGBA', (base_width, base_height))
+    new_image.paste(opacity_image, (x, y), opacity_image)
+    
+    return Image.alpha_composite(base_image, new_image)
+
+
 def create_figure(poke_image):
     shadow = poke_png_to_sillhouette(poke_image, (0, 0, 0))
     shadow = reduce_opacity(shadow, 0.5)
@@ -63,7 +72,8 @@ def resize(img, new_width):
 def put_figure_on_template(figure):
     figure = resize(figure, 200)
     bg = Image.open('small_template.png')
-    bg.paste(figure, (30, 30), figure)
+    bg = opacity_friendly_paste(bg, figure, 30, 30)
+    #bg.paste(figure, (30, 30), figure)
     return bg
 
 
