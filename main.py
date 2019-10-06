@@ -7,7 +7,7 @@ from PIL import Image
 
 from db_context_manager import dbopen
 
-from who_is_she import create_full_image
+from create_image import create_full_image
 
 
 def get_random_pokemon():

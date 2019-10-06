@@ -19,7 +19,6 @@ def poke_png_to_sillhouette(image_path, color_tuple):
     data[..., :-1][non_transparent_areas.T] = color_tuple
 
     im2 = Image.fromarray(data)
-    #im2.show()
 
     return im2
 
@@ -73,7 +72,6 @@ def put_figure_on_template(figure):
     figure = resize(figure, 200)
     bg = Image.open('small_template.png')
     bg = opacity_friendly_paste(bg, figure, 30, 30)
-    #bg.paste(figure, (30, 30), figure)
     return bg
 
 
