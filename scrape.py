@@ -12,8 +12,10 @@ from random import choice
 from time import sleep
 import re
 
-from names import names
 from secret_token import client_secret
+
+import sqlite3
+from db_context_manager import dbopen
 
 
 def scrape_names():
@@ -57,7 +59,17 @@ def match_numbers_and_pokemon():
         print()
 
 
-match_numbers_and_pokemon()
+
+#match_numbers_and_pokemon()
+
+with dbopen('pokemon.db') as c:
+    c.execute('CREATE TABLE IF NOT EXISTS pokemon(pokemon TEXT, id TEXT)')
+    with open('pokemans') as f:
+        for l in f:
+            l = l.replace('\n', '')
+            i = l.split(' - ')
+            c.execute('INSERT INTO pokemon(pokemon, id) VALUES (?,?)', [i[1], i[0]])
+            #print(f'"{i[1]}": "{i[0]}",')
 
 
 #bot = commands.Bot(command_prefix='!')
