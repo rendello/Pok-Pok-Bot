@@ -5,9 +5,9 @@ import random
 import urllib.request 
 from PIL import Image
 
-from db_context_manager import dbopen
+from Core.db_context_manager import dbopen
 
-from create_image import create_full_image
+from Core.create_image import create_full_image
 
 
 def get_random_pokemon():
@@ -18,7 +18,7 @@ def get_random_pokemon():
     Returns:
         pokemon: a <dict> with 'pokemon' (the creature's name <str>) and 'id' (its id <str>).
     '''
-    with dbopen('pokemon.db') as c:
+    with dbopen('Core/pokemon.db') as c:
 
         # Must use rowid, as id is technically text.
         c.execute('SELECT MAX(rowid) FROM pokemon;')
