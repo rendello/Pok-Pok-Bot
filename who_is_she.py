@@ -5,7 +5,7 @@ import numpy as np
 
 
 def poke_png_to_sillhouette(image_path, color_tuple):
-    ''' Flattens all non transparent pixels to the classic "who's that pokemon" blue.
+    ''' Flattens all non transparent pixels.
 
         Code modified from this thread: https://stackoverflow.com/a/3753428
     '''
@@ -27,7 +27,7 @@ def poke_png_to_sillhouette(image_path, color_tuple):
 def reduce_opacity(im, opacity):
     """ Returns an image with reduced opacity.
 
-    Modified from http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/362879
+        Modified from http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/362879
     """
     assert opacity >= 0 and opacity <= 1
     if im.mode != 'RGBA':
@@ -48,13 +48,22 @@ def create_figure(poke_image):
     im2 = poke_png_to_sillhouette(poke_image, (13, 93, 164))
 
     shadow.paste(im1, (10, 0), im1)
-    shadow.paste(im2, (15, 0), im2)
+    shadow.paste(im2, (23, 2), im2)
     return shadow
 
 
+def resize(img, new_width):
+    ''' Modified from: https://opensource.com/life/15/2/resize-images-python. '''
+    wpercent = (new_width / float(img.size[0]))
+    hsize = int((float(img.size[1]) * float(wpercent)))
+    img = img.resize((new_width, hsize), Image.ANTIALIAS)
+    return img
+
+
 def put_figure_on_template(figure):
-    bg = Image.open('template.png')
-    bg.paste(figure, (270, 270), figure)
+    figure = resize(figure, 200)
+    bg = Image.open('small_template.png')
+    bg.paste(figure, (30, 30), figure)
     bg.show()
 
 
