@@ -1,7 +1,8 @@
 #!/usr/bin/python3.6
 
-from PIL import Image
+from PIL import Image, ImageEnhance
 import numpy as np
+
 
 def poke_png_to_sillhouette(image_path, color_tuple):
     ''' Flattens all non transparent pixels to the classic "who's that pokemon" blue.
@@ -23,8 +24,40 @@ def poke_png_to_sillhouette(image_path, color_tuple):
     return im2
 
 
-im1 = poke_png_to_sillhouette('img.png', (0,0,0))
-im2 = poke_png_to_sillhouette('img.png', (13, 93, 164))
+def reduce_opacity(im, opacity):
+    """ Returns an image with reduced opacity.
 
-im1.paste(im2, (7, 0), im2)
-im1.show()
+    Modified from http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/362879
+    """
+    assert opacity >= 0 and opacity <= 1
+    if im.mode != 'RGBA':
+        im = im.convert('RGBA')
+    else:
+        im = im.copy()
+    alpha = im.split()[3]
+    alpha = ImageEnhance.Brightness(alpha).enhance(opacity)
+    im.putalpha(alpha)
+    return im
+
+
+def create_figure(poke_image):
+    shadow = poke_png_to_sillhouette(poke_image, (0, 0, 0))
+    shadow = reduce_opacity(shadow, 0.5)
+
+    im1 = poke_png_to_sillhouette(poke_image, (7, 61, 93))
+    im2 = poke_png_to_sillhouette(poke_image, (13, 93, 164))
+
+    shadow.paste(im1, (10, 0), im1)
+    shadow.paste(im2, (15, 0), im2)
+    return shadow
+
+
+def put_figure_on_template(figure):
+    bg = Image.open('template.png')
+    bg.paste(figure, (270, 270), figure)
+    bg.show()
+
+
+figure = create_figure('img.png')
+put_figure_on_template(figure)
+
