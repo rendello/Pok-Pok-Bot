@@ -50,11 +50,12 @@ def fetch_image(pokemon_id):
     return image_path
 
 
-pokemon = get_random_pokemon()
-image_path = fetch_image(pokemon['id'])
-im = create_full_image(image_path)
+def get_pokemon_and_image():
+    pokemon = get_random_pokemon()
+    image_path = fetch_image(pokemon['id'])
+    im = create_full_image(image_path)
 
-im.show()
+    return {'name': pokemon, 'image': im}
 
 
 

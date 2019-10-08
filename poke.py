@@ -5,6 +5,7 @@ from fuzzywuzzy import fuzz
 import discord
 from discord.ext import commands
 
+from main import get_pokemon_and_image
 
 class Match():
     def __init__(*, server, channel, pokemon):
@@ -45,7 +46,10 @@ bot = commands.Bot(command_prefix="!")
 
 @bot.command()
 async def poke(ctx):
-    pass
+    pokemon_and_image = get_pokemon_and_image()
+    pokemon_and_image['name']
+    pokemon_and_image['image']
+    ctx.channel.send_message(file=discord.File(''))
 
 text = clean_input_string("HAY GUYZZ!!! I loveee the PicaKHCHU PILCACHU pokeemon!!!! Cahr Charizo Burger Yommmmmm")
 print(pokemon_in_text(text=text, pokemon='Charizard'))
