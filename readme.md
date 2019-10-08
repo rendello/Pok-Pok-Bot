@@ -1,8 +1,8 @@
 
-Poké Poké 💕: The *Who's That Pokémon?* for Discord! \* \*\*
+# Poké Poké 💕: The *Who's That Pokémon?* for Discord! \* \*\*
 
-\* *Not officially licensed*
-\*\* *Not even the only "Who's That Pokémon?" bot for Discord*
+\* ***Not officially licensed***  
+\*\* ***Not even the only "Who's That Pokémon?" bot for Discord***
 
 If you want to spice up your server with a fun Pokémon guessing game, but you
 don't want anymore functionality heaped on, this might be the bot for you! 
