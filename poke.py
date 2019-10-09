@@ -2,10 +2,13 @@
 
 from fuzzywuzzy import fuzz
 
+from Core.secret_token import client_secret
+
 import discord
 from discord.ext import commands
 
 from main import get_pokemon_and_image
+
 
 class Match():
     def __init__(*, server, channel, pokemon):
@@ -46,10 +49,10 @@ bot = commands.Bot(command_prefix="!")
 
 @bot.command()
 async def poke(ctx):
-    pokemon_and_image = get_pokemon_and_image()
-    pokemon_and_image['name']
-    pokemon_and_image['image']
-    ctx.channel.send_message(file=discord.File(''))
+    pokemon, image_path = get_pokemon_and_image()
+    await ctx.channel.send(file=discord.File(image_path))
 
 text = clean_input_string("HAY GUYZZ!!! I loveee the PicaKHCHU PILCACHU pokeemon!!!! Cahr Charizo Burger Yommmmmm")
 print(pokemon_in_text(text=text, pokemon='Charizard'))
+
+bot.run(client_secret)

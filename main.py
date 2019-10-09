@@ -4,6 +4,7 @@ import random
 
 import urllib.request 
 from PIL import Image
+from tempfile import NamedTemporaryFile
 
 from Core.db_context_manager import dbopen
 
@@ -54,8 +55,11 @@ def get_pokemon_and_image():
     pokemon = get_random_pokemon()
     image_path = fetch_image(pokemon['id'])
     im = create_full_image(image_path)
+    tempfile = NamedTemporaryFile(suffix='.png', delete=False)
 
-    return {'name': pokemon, 'image': im}
+    im.save(tempfile.name, 'PNG')
 
+    return (pokemon, tempfile.name)
 
+get_pokemon_and_image()
 
