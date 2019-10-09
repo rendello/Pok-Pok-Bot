@@ -1,5 +1,5 @@
 
-# Poké Poké 💕: The *Who's That Pokémon?* for Discord! \* \*\*
+# Poké Poké: *Who's That Pokémon?* for Discord!
 
 \* ***Not officially licensed***  
 \*\* ***Not even the only "Who's That Pokémon?" bot for Discord***
