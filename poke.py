@@ -1,16 +1,31 @@
 #!/usr/bin/python3.6
 
 from fuzzywuzzy import fuzz
-
-from Core.secret_token import client_secret
-
 import asyncio
 import discord
 from discord.ext import commands
 
 from main import get_pokemon_and_image
+from Core.secret_token import client_secret
 
 
+
+# ------ User functions --------
+def clean_input_string(input_string):
+    input_string = input_string.lower()
+    accepted_chars = 'abcdefghijklmnopqrstuvwxyz: '
+    clean_string = str()
+
+    for char in input_string:
+        if char not in accepted_chars:
+            clean_string += ' '
+        else:
+            clean_string += char
+    return clean_string
+
+
+
+# ---------- Classes -----------
 class Match():
     def __init__(self, ctx, *, pokemon_name):
         self.server = ctx.guild
@@ -25,19 +40,6 @@ class Match():
 
 
 
-def clean_input_string(input_string):
-    input_string = input_string.lower()
-    accepted_chars = 'abcdefghijklmnopqrstuvwxyz: '
-    clean_string = str()
-
-    for char in input_string:
-        if char not in accepted_chars:
-            clean_string += ' '
-        else:
-            clean_string += char
-    return clean_string
-
-
 def pokemon_in_text(*, text, pokemon_name):
     pokemon_name = pokemon_name.lower()
 
@@ -49,10 +51,14 @@ def pokemon_in_text(*, text, pokemon_name):
     return False
 
 
+
+# ---------- Globals -----------
 bot = commands.Bot(command_prefix="!")
 matches = {}
 
 
+
+# ---------- Commands ----------
 @bot.command()
 async def poke(ctx):
     pokemon, image_path, original_image_path = get_pokemon_and_image()
@@ -71,6 +77,8 @@ async def d(ctx):
     print(matches)
 
 
+
+# ----------- Events -----------
 @bot.event
 async def on_message(message):
     if message.channel.id in matches.keys():
@@ -81,8 +89,9 @@ async def on_message(message):
             await message.channel.send(f'Nice {message.author.mention}!')
             await message.channel.send(file=discord.File(match.original_image_path))
 
-
     # Stops on_message from blocking all other commands.
     await bot.process_commands(message)
+
+
 
 bot.run(client_secret)
