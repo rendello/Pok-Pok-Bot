@@ -19,11 +19,11 @@ class Match():
 
 def clean_input_string(input_string):
     input_string = input_string.lower()
-    alphabet = 'abcdefghijklmnopqrstuvwxyz'
+    accepted_chars = 'abcdefghijklmnopqrstuvwxyz: '
     clean_string = str()
 
     for char in input_string:
-        if char not in alphabet:
+        if char not in accepted_chars:
             clean_string += ' '
         else:
             clean_string += char
@@ -32,14 +32,12 @@ def clean_input_string(input_string):
 
 def pokemon_in_text(*, text, pokemon_name):
     pokemon_name = pokemon_name.lower()
-    words = text.split()
 
-    if len(words) > 50:
+    if len(text) > 100:
         return False
 
-    for word in words:
-        if fuzz.ratio(word, pokemon_name) > 90:
-            return True
+    if fuzz.token_set_ratio(text, pokemon_name) > 90:
+        return True
     return False
 
     
@@ -75,9 +73,5 @@ async def on_message(message):
 
     # Stops on_message from blocking all other commands.
     await bot.process_commands(message)
-
-
-#text = clean_input_string("HAY GUYZZ!!! I loveee the PicaKHCHU PILCACHU pokeemon!!!! Cahr Charizo Burger Yommmmmm")
-#print(pokemon_in_text(text=text, pokemon='Charizard'))
 
 bot.run(client_secret)
