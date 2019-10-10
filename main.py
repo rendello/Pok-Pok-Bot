@@ -8,7 +8,7 @@ from tempfile import NamedTemporaryFile
 
 from Core.db_context_manager import dbopen
 
-from Core.create_image import create_full_image
+from Core.create_image import create_wtp_images
 
 
 def get_random_pokemon():
@@ -54,9 +54,13 @@ def fetch_image(pokemon_id):
 def get_pokemon_and_image():
     pokemon = get_random_pokemon()
     image_path = fetch_image(pokemon['id'])
-    im = create_full_image(image_path)
+
+    image, original_image = create_wtp_images(image_path)
+
     tempfile = NamedTemporaryFile(suffix='.png', delete=False)
+    image.save(tempfile.name, 'PNG')
 
-    im.save(tempfile.name, 'PNG')
+    original_tempfile = NamedTemporaryFile(suffix='.png', delete=False)
+    original_image.save(original_tempfile.name, 'PNG')
 
-    return (pokemon, tempfile.name)
+    return (pokemon, tempfile.name, original_tempfile.name)

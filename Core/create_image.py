@@ -49,15 +49,15 @@ def opacity_friendly_paste(base_image, opacity_image, x, y):
 
 
 def create_figure(poke_image):
-    shadow = poke_png_to_sillhouette(poke_image, (0, 0, 0))
-    shadow = reduce_opacity(shadow, 0.5)
+    figure = poke_png_to_sillhouette(poke_image, (0, 0, 0))
+    figure = reduce_opacity(figure, 0.5)
 
     im1 = poke_png_to_sillhouette(poke_image, (7, 61, 93))
     im2 = poke_png_to_sillhouette(poke_image, (13, 93, 164))
 
-    shadow.paste(im1, (10, 0), im1)
-    shadow.paste(im2, (23, 2), im2)
-    return shadow
+    figure.paste(im1, (10, 0), im1)
+    figure.paste(im2, (23, 2), im2)
+    return figure
 
 
 def resize(img, new_width):
@@ -75,9 +75,12 @@ def put_figure_on_template(figure):
     return bg
 
 
-def create_full_image(image_path):
+def create_wtp_images(image_path):
+    original_figure = Image.open(image_path)
+    original_image = put_figure_on_template(original_figure)
+
     figure = create_figure(image_path)
     full_image = put_figure_on_template(figure)
 
-    return full_image
+    return (full_image, original_image)
 
