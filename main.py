@@ -60,6 +60,3 @@ def get_pokemon_and_image():
     im.save(tempfile.name, 'PNG')
 
     return (pokemon, tempfile.name)
-
-get_pokemon_and_image()
-

@@ -11,10 +11,9 @@ from main import get_pokemon_and_image
 
 
 class Match():
-    def __init__(*, server, channel, pokemon):
-        self.server = channel
-        self.channel = channel
-        self.pokemon = pokemon
+    def __init__(self, ctx):
+        self.server = ctx.guild
+        self.channel = ctx.channel
 
 
 def clean_input_string(input_string):
@@ -45,6 +44,7 @@ def pokemon_in_text(*, text, pokemon):
     
 
 bot = commands.Bot(command_prefix="!")
+matches = {}
 
 
 @bot.command()
@@ -52,7 +52,29 @@ async def poke(ctx):
     pokemon, image_path = get_pokemon_and_image()
     await ctx.channel.send(file=discord.File(image_path))
 
-text = clean_input_string("HAY GUYZZ!!! I loveee the PicaKHCHU PILCACHU pokeemon!!!! Cahr Charizo Burger Yommmmmm")
-print(pokemon_in_text(text=text, pokemon='Charizard'))
+    match_key = str(ctx.message.channel.id)
+
+    matches[match_key] = Match(ctx)
+
+
+@bot.command()
+async def d(ctx):
+    print(matches)
+
+
+@bot.event
+async def on_message(message):
+
+    clean_message = clean_input_string(message.content)
+    if pokemon_in_text(text=clean_message, pokemon='Pikachu'):
+        await message.channel.send("NICE")
+
+
+    # Stops on_message from blocking all other commands.
+    await bot.process_commands(message)
+
+
+#text = clean_input_string("HAY GUYZZ!!! I loveee the PicaKHCHU PILCACHU pokeemon!!!! Cahr Charizo Burger Yommmmmm")
+#print(pokemon_in_text(text=text, pokemon='Charizard'))
 
 bot.run(client_secret)
