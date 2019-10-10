@@ -29,7 +29,7 @@ def get_random_pokemon():
         c.execute('SELECT pokemon, id FROM pokemon WHERE id=?;', [str(pokemon_id)])
         result = c.fetchone()
 
-        pokemon = {'pokemon': result[0], 'id': result[1]}
+        pokemon = {'name': result[0], 'id': result[1]}
 
         return pokemon
 

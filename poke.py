@@ -11,10 +11,10 @@ from main import get_pokemon_and_image
 
 
 class Match():
-    def __init__(self, ctx):
+    def __init__(self, ctx, *, pokemon_name):
         self.server = ctx.guild
         self.channel = ctx.channel
-        self.pokemon = "Charizard"
+        self.pokemon_name = pokemon_name
 
 
 def clean_input_string(input_string):
@@ -30,15 +30,15 @@ def clean_input_string(input_string):
     return clean_string
 
 
-def pokemon_in_text(*, text, pokemon):
-    pokemon = pokemon.lower()
+def pokemon_in_text(*, text, pokemon_name):
+    pokemon_name = pokemon_name.lower()
     words = text.split()
 
     if len(words) > 50:
         return False
 
     for word in words:
-        if fuzz.ratio(word, pokemon) > 90:
+        if fuzz.ratio(word, pokemon_name) > 90:
             return True
     return False
 
@@ -55,7 +55,8 @@ async def poke(ctx):
 
     match_key = ctx.message.channel.id
 
-    matches[match_key] = Match(ctx)
+    print(pokemon['name'])
+    matches[match_key] = Match(ctx, pokemon_name=pokemon['name'])
 
 
 @bot.command()
@@ -68,7 +69,7 @@ async def on_message(message):
     if message.channel.id in matches.keys():
         clean_message = clean_input_string(message.content)
 
-        if pokemon_in_text(text=clean_message, pokemon=matches[message.channel.id].pokemon):
+        if pokemon_in_text(text=clean_message, pokemon_name=matches[message.channel.id].pokemon_name):
             await message.channel.send("NICE")
 
 
