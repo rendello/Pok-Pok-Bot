@@ -14,6 +14,7 @@ class Match():
     def __init__(self, ctx):
         self.server = ctx.guild
         self.channel = ctx.channel
+        self.pokemon = "Charizard"
 
 
 def clean_input_string(input_string):
@@ -52,7 +53,7 @@ async def poke(ctx):
     pokemon, image_path = get_pokemon_and_image()
     await ctx.channel.send(file=discord.File(image_path))
 
-    match_key = str(ctx.message.channel.id)
+    match_key = ctx.message.channel.id
 
     matches[match_key] = Match(ctx)
 
@@ -64,10 +65,11 @@ async def d(ctx):
 
 @bot.event
 async def on_message(message):
+    if message.channel.id in matches.keys():
+        clean_message = clean_input_string(message.content)
 
-    clean_message = clean_input_string(message.content)
-    if pokemon_in_text(text=clean_message, pokemon='Pikachu'):
-        await message.channel.send("NICE")
+        if pokemon_in_text(text=clean_message, pokemon=matches[message.channel.id].pokemon):
+            await message.channel.send("NICE")
 
 
     # Stops on_message from blocking all other commands.
