@@ -68,7 +68,7 @@ async def on_message(message):
         clean_message = clean_input_string(message.content)
 
         if pokemon_in_text(text=clean_message, pokemon_name=matches[message.channel.id].pokemon_name):
-            await message.channel.send("NICE")
+            await message.channel.send(f'Nice {message.author.mention}!')
 
 
     # Stops on_message from blocking all other commands.
