@@ -12,3 +12,5 @@ don't want anymore functionality heaped on, this might be the bot for you!
 Add it to your server with:
 
 ``` Invite code will go here, but it's a WIP so not available atm ```
+
+And call a match with the `!poke` command!
