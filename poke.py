@@ -81,13 +81,13 @@ async def d(ctx):
 # ----------- Events -----------
 @bot.event
 async def on_message(message):
-    if message.channel.id in matches.keys():
+    if (message.channel.id in matches.keys()) and (message.author.id != bot.user.id):
         clean_message = clean_input_string(message.content)
         match = matches[message.channel.id]
 
         if pokemon_in_text(text=clean_message, pokemon_name=match.pokemon_name):
-            await message.channel.send(f'Nice {message.author.mention}!')
             await message.channel.send(file=discord.File(match.original_image_path))
+            await message.channel.send(f"That's right, {message.author.mention}! It's {match.pokemon_name}!")
 
     # Stops on_message from blocking all other commands.
     await bot.process_commands(message)
