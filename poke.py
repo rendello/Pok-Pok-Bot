@@ -65,17 +65,22 @@ class Match():
         channel (discord.channel.TextChannel): The channel where the match is played.
         pokemon_name (str): The pokemon's name that players will guess at.
         original_image_path (str): The file path to the unshrouded WTP image.
+        match_ended (bool): True if match is finished, False if not. Used to make sure
+            endings only occur once per match.
     '''
     def __init__(self, ctx, *, pokemon_name):
         self.server = ctx.guild
         self.channel = ctx.channel
         self.pokemon_name = pokemon_name
         self.original_image_path = str()
+        self.match_ended = False
 
 
     async def set_timer(self, seconds):
         await asyncio.sleep(seconds)
-        await self.end('failure')
+
+        if not self.match_ended:
+            await self.end('failure')
 
 
     async def end(self, nature):
@@ -84,10 +89,14 @@ class Match():
         Args:
             nature (str): 'success' if match won in time, 'failure' if not.
         '''
+        self.match_ended = True
+
         if nature == 'failure':
             print('match lost')
         else:
             print('match won')
+
+        del matches[self.channel.id]
 
 
 
