@@ -40,12 +40,25 @@ class Match():
         self.channel = ctx.channel
         self.pokemon_name = pokemon_name
         self.original_image_path = str()
-        self.timeout_flag = asyncio.Event()
+        self.timeout_flag = 'active'
 
 
-    async def timer(self, seconds):
+    async def set_timer(self, seconds):
         await asyncio.sleep(seconds)
-        self.timeout_flag.set()
+        await self.end('failure')
+
+
+    async def end(self, nature):
+        ''' Ends a match.
+
+        Args:
+            nature (str): 'success' if match won in time, 'failure' if not.
+        '''
+        if nature == 'failure':
+            print('match lost')
+        else:
+            print('match won')
+
 
 
 
@@ -90,7 +103,10 @@ async def poke(ctx):
     print(pokemon['name'])
     matches[match_key] = Match(ctx, pokemon_name=pokemon['name'])
 
-    matches[match_key].original_image_path = original_image_path
+    match = matches[match_key]
+
+    match.original_image_path = original_image_path
+    await match.set_timer(5)
 
 
 @bot.command()
@@ -111,12 +127,14 @@ async def on_message(message):
 
     # Only look for pokemon in channels with matches
     if (message.channel.id in matches.keys()) and (message.author.id != bot.user.id):
+        match = matches[message.channel.id]
+
         clean_message = clean_input_string(message.content)
 
-        match = matches[message.channel.id]
         if pokemon_in_text(text=clean_message, pokemon_name=match.pokemon_name):
             await message.channel.send(file=discord.File(match.original_image_path))
             await message.channel.send(f"That's right, {message.author.mention}! It's {match.pokemon_name}!")
+            await match.end('success')
 
     # Stops on_message from blocking all other commands.
     await bot.process_commands(message)
