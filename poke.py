@@ -32,36 +32,6 @@ def clean_input_string(input_string):
     return clean_string
 
 
-
-# ---------- Classes -----------
-class Match():
-    def __init__(self, ctx, *, pokemon_name):
-        self.server = ctx.guild
-        self.channel = ctx.channel
-        self.pokemon_name = pokemon_name
-        self.original_image_path = str()
-        self.timeout_flag = 'active'
-
-
-    async def set_timer(self, seconds):
-        await asyncio.sleep(seconds)
-        await self.end('failure')
-
-
-    async def end(self, nature):
-        ''' Ends a match.
-
-        Args:
-            nature (str): 'success' if match won in time, 'failure' if not.
-        '''
-        if nature == 'failure':
-            print('match lost')
-        else:
-            print('match won')
-
-
-
-
 def pokemon_in_text(*, text, pokemon_name):
     ''' Finds the given pokemon_name in the given text.
     
@@ -83,6 +53,41 @@ def pokemon_in_text(*, text, pokemon_name):
     if fuzz.token_set_ratio(text, pokemon_name) > 90:
         return True
     return False
+
+
+
+# ---------- Classes -----------
+class Match():
+    ''' A given game of WTP.
+
+    Attributes:
+        server (discord.guild.Guild): The server where the playing channel is.
+        channel (discord.channel.TextChannel): The channel where the match is played.
+        pokemon_name (str): The pokemon's name that players will guess at.
+        original_image_path (str): The file path to the unshrouded WTP image.
+    '''
+    def __init__(self, ctx, *, pokemon_name):
+        self.server = ctx.guild
+        self.channel = ctx.channel
+        self.pokemon_name = pokemon_name
+        self.original_image_path = str()
+
+
+    async def set_timer(self, seconds):
+        await asyncio.sleep(seconds)
+        await self.end('failure')
+
+
+    async def end(self, nature):
+        ''' Ends a match.
+
+        Args:
+            nature (str): 'success' if match won in time, 'failure' if not.
+        '''
+        if nature == 'failure':
+            print('match lost')
+        else:
+            print('match won')
 
 
 
