@@ -4,12 +4,15 @@ import random
 
 import urllib.request 
 from PIL import Image
+from pathlib import Path
 from tempfile import NamedTemporaryFile
 
 from Core.db_context_manager import dbopen
 
 from Core.create_image import create_wtp_images
 
+
+cachedir = './Cache'
 
 def get_random_pokemon():
     '''
@@ -51,16 +54,37 @@ def fetch_image(pokemon_id):
     return image_path
 
 
-def get_pokemon_and_image():
-    pokemon = get_random_pokemon()
-    image_path = fetch_image(pokemon['id'])
+def cached_version_exists(pokemon):
+    shrouded_path = Path(f'{cachedir}/{pokemon["name"]}_shrouded.png')
+    unshrouded_path = Path(f'{cachedir}/{pokemon["name"]}_unshrouded.png')
+    if shrouded_path.is_file() and unshrouded_path.is_file():
+        return True
 
-    image, original_image = create_wtp_images(image_path)
 
+def save_to_tempfile(image):
     tempfile = NamedTemporaryFile(suffix='.png', delete=False)
     image.save(tempfile.name, 'PNG')
 
-    original_tempfile = NamedTemporaryFile(suffix='.png', delete=False)
-    original_image.save(original_tempfile.name, 'PNG')
+    return tempfile.name
 
-    return (pokemon, tempfile.name, original_tempfile.name)
+
+def get_pokemon_and_image():
+    pokemon = get_random_pokemon()
+
+    if cached_version_exists(pokemon):
+        shrouded_path = f'{cachedir}/{pokemon["name"]}_shrouded.png'
+        unshrouded_path = f'{cachedir}/{pokemon["name"]}_unshrouded.png'
+
+        shrouded_image = Image.open(shrouded_path)
+        unshrouded_image = Image.open(unshrouded_path)
+    else:
+        image_path = fetch_image(pokemon['id'])
+        shrouded_image, unshrouded_image = create_wtp_images(image_path)
+
+        shrouded_path = save_to_tempfile(shrouded_image)
+        unshrouded_path = save_to_tempfile(unshrouded_image)
+
+        shrouded_image.save(f'{cachedir}/{pokemon["name"]}_shrouded.png', 'PNG')
+        unshrouded_image.save(f'{cachedir}/{pokemon["name"]}_unshrouded.png', 'PNG')
+
+    return (pokemon, shrouded_path, unshrouded_path)

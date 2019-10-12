@@ -74,6 +74,8 @@ class Match():
         self.pokemon_name = pokemon_name
         self.original_image_path = str()
         self.match_ended = False
+        
+        self.text_sections = {}
 
 
     async def set_timer(self, seconds):
@@ -93,7 +95,7 @@ class Match():
 
         if nature == 'failure':
             print('match lost')
-        else:
+        elif nature == 'success':
             print('match won')
 
         del matches[self.channel.id]
@@ -120,7 +122,7 @@ async def poke(ctx):
     match = matches[match_key]
 
     match.original_image_path = original_image_path
-    await match.set_timer(5)
+    await match.set_timer(35)
 
 
 @bot.command()
