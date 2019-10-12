@@ -61,21 +61,46 @@ class Match():
     ''' A given game of WTP.
 
     Attributes:
+        ctx (discord.ext.commands.context.Context): Discord context.
         server (discord.guild.Guild): The server where the playing channel is.
         channel (discord.channel.TextChannel): The channel where the match is played.
-        pokemon_name (str): The pokemon's name that players will guess at.
-        original_image_path (str): The file path to the unshrouded WTP image.
         match_ended (bool): True if match is finished, False if not. Used to make sure
             endings only occur once per match.
+        pokemon_name (str): The pokemon's name that players will guess at.
+        unshrouded_path (str): The file path to the unshrouded WTP image.
+        shrouded_path (str): The file path to the shrouded WTP image.
+        messages (dict): Contains 'sections' as keys, and 'text' for each section as
+            values. To be used by send_message and related functions.
     '''
-    def __init__(self, ctx, *, pokemon_name):
+    def __init__(self, ctx):
+        self.ctx = ctx
         self.server = ctx.guild
         self.channel = ctx.channel
-        self.pokemon_name = pokemon_name
-        self.original_image_path = str()
         self.match_ended = False
+
+        poke_data = get_pokemon_and_image()
+        self.pokemon_name = poke_data['name']
+        self.unshrouded_path = poke_data['unshrouded_path']
+        self.shrouded_path = poke_data['shrouded_path']
         
-        self.text_sections = {}
+        self.messages = {}
+
+        print(self.pokemon_name)
+
+
+    async def send_message(self, text=str(), *, section, file=None):
+        ''' Sends a message, or replaces the message if the section is already used. '''
+        if section in self.messages.keys():
+            _id = await self.messages[section].edit(content=text)
+        else:
+            _id = await self.ctx.send(text, file=file)
+            self.messages[section] = _id
+
+
+    async def append_to_message(self, *, text, section):
+        ''' Appends to message. If a full edit needed, see send_message. '''
+        message = self.messages[section]
+        await message.edit(content=f'{message.content}{text}')
 
 
     async def set_timer(self, seconds):
@@ -85,7 +110,12 @@ class Match():
             await self.end('failure')
 
 
-    async def end(self, nature):
+    async def start(self):
+        await self.send_message(file=discord.File(self.shrouded_path), section='shrouded_image')
+        await self.set_timer(35)
+
+
+    async def end(self, nature, winner=str()):
         ''' Ends a match.
 
         Args:
@@ -94,11 +124,14 @@ class Match():
         self.match_ended = True
 
         if nature == 'failure':
-            print('match lost')
+            await self.send_message(f"It's {self.pokemon_name}!", section='end')
         elif nature == 'success':
-            print('match won')
+            await self.send_message(f"That's right, {winner.mention}! It's {self.pokemon_name}!", section='end')
 
+        await self.send_message(file=discord.File(self.unshrouded_path), section='unshrouded_image')
         del matches[self.channel.id]
+
+
 
 
 
@@ -111,18 +144,9 @@ matches = {}
 # ---------- Commands ----------
 @bot.command()
 async def poke(ctx):
-    pokemon, image_path, original_image_path = get_pokemon_and_image()
-    await ctx.channel.send(file=discord.File(image_path))
+    matches[ctx.message.channel.id] = Match(ctx)
+    await matches[ctx.message.channel.id].start()
 
-    match_key = ctx.message.channel.id
-
-    print(pokemon['name'])
-    matches[match_key] = Match(ctx, pokemon_name=pokemon['name'])
-
-    match = matches[match_key]
-
-    match.original_image_path = original_image_path
-    await match.set_timer(35)
 
 
 @bot.command()
@@ -148,9 +172,7 @@ async def on_message(message):
         clean_message = clean_input_string(message.content)
 
         if pokemon_in_text(text=clean_message, pokemon_name=match.pokemon_name):
-            await message.channel.send(file=discord.File(match.original_image_path))
-            await message.channel.send(f"That's right, {message.author.mention}! It's {match.pokemon_name}!")
-            await match.end('success')
+            await match.end('success', winner=message.author)
 
     # Stops on_message from blocking all other commands.
     await bot.process_commands(message)

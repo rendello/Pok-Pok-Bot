@@ -70,32 +70,36 @@ def get_pokemon_and_image():
     ''' Gets pokemon name, id, and WTP images (shrouded and not)
 
     Returns:
-        tuple:
-            The first value is a dict that contains 'name' (a string containing
-            the pokemon's name), and id, a three-number string representing the
-            pokemon's ID. Eg:
+        dict: A dict that contains string 'name', id (a three-number string
+            representing the pokemon's ID), 'shrouded_path', and 'unshrouded_path'
+            (which contain the paths to their respective WTP images). Eg:
 
-                {'name': 'Pikachu', 'id': '025'}
-
-            The second value is the path to the cached shrouded WTP image.
-            The third is the path to the unshrouded variant.
+                {
+                    'name': 'Pikachu',
+                    'id': '025',
+                    'shrouded_path': 'Cache/pikachu_shrouded.png',
+                    'unshrouded_path': 'Cache/pikachu_unshrouded.png'
+                }
     '''
-    pokemon = get_random_pokemon()
-    #pokemon = {'name': 'Pikachu', 'id': '025'}
+    poke_data = get_random_pokemon()
+    #poke_data = {'name': 'Pikachu', 'id': '025'}
 
-    shrouded_path = f'{cachedir}/{pokemon["name"]}_shrouded.png'
-    unshrouded_path = f'{cachedir}/{pokemon["name"]}_unshrouded.png'
+    shrouded_path = f'{cachedir}/{poke_data["name"]}_shrouded.png'
+    unshrouded_path = f'{cachedir}/{poke_data["name"]}_unshrouded.png'
 
-    if cached_version_exists(pokemon, shrouded_path, unshrouded_path):
+    if cached_version_exists(poke_data, shrouded_path, unshrouded_path):
         shrouded_image = Image.open(shrouded_path)
         unshrouded_image = Image.open(unshrouded_path)
     else:
         # Create images from pokedex
-        image_path = fetch_image(pokemon['id'])
+        image_path = fetch_image(poke_data['id'])
         shrouded_image, unshrouded_image = create_wtp_images(image_path)
 
         # Saved cached versions
         shrouded_image.save(shrouded_path, 'PNG')
         unshrouded_image.save(unshrouded_path, 'PNG')
 
-    return (pokemon, shrouded_path, unshrouded_path)
+    poke_data['shrouded_path'] = shrouded_path
+    poke_data['unshrouded_path'] = unshrouded_path
+
+    return (poke_data)
