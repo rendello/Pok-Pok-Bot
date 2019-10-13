@@ -11,7 +11,7 @@ don't want anymore functionality heaped on, this might be the bot for you!
 
 Add it to your server with:
 
-https://discordapp.com/api/oauth2/authorize?client\_id=616001226718314517&permissions=378944&scope=bot
+https://discordapp.com/api/oauth2/authorize?client_id=616001226718314517&permissions=378944&scope=bot
 
 And start a match with the `!poke` command!
 
