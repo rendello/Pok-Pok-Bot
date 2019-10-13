@@ -77,7 +77,6 @@ def hash_pokemon_name(pokemon_name):
     return small_hash
 
 
-
 def get_pokemon_and_image():
     ''' Gets pokemon name, id, and WTP images (shrouded and not)
 
@@ -89,12 +88,12 @@ def get_pokemon_and_image():
                 {
                     'name': 'Pikachu',
                     'id': '025',
-                    'shrouded_path': 'Cache/pikachu_shrouded.png',
-                    'unshrouded_path': 'Cache/pikachu_unshrouded.png'
+                    'shrouded_path': 'Cache/64f4cf1_shrouded.png',
+                    'unshrouded_path': 'Cache/64f4cf1_unshrouded.png'
                 }
     '''
     poke_data = get_random_pokemon()
-    #poke_data = {'name': 'Pikachu', 'id': '025'}
+    #poke_data = {'name': 'Pikachu', 'id': '025'} # Test case
 
     # Putting the real pokemon name as the filename allows Discord users to see
     # what the pokemon is

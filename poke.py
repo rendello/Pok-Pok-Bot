@@ -5,6 +5,8 @@ import asyncio
 import discord
 from discord.ext import commands
 
+import random
+
 from main import get_pokemon_and_image
 from Core.secret_token import client_secret
 
@@ -113,7 +115,17 @@ class Match():
 
 
     async def start(self):
-        await self.send_message(file=discord.File(self.shrouded_path), section='shrouded_image')
+        silly_intro_texts = [
+            "Do you wanna be the very best?! Then see how you fair in a match of",
+            "Are you ready for",
+            f"{self.ctx.message.author.name}! I choose you to play",
+            "New Pokémon, who dis?",
+            "Hi! You have 35 second to tell me"
+        ]
+
+        intro_text = f"*{random.choice(silly_intro_texts)}* ***WHO'S THAT POKÉMON?***"
+
+        await self.send_message(text=intro_text, file=discord.File(self.shrouded_path), section='shrouded_image')
         await self.set_timer(35)
 
 
@@ -149,7 +161,6 @@ matches = {}
 async def poke(ctx):
     matches[ctx.message.channel.id] = Match(ctx)
     await matches[ctx.message.channel.id].start()
-
 
 
 @bot.command()
