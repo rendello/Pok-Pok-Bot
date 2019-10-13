@@ -2,6 +2,7 @@
 
 import random
 
+import hashlib
 import urllib.request 
 from PIL import Image
 from pathlib import Path
@@ -66,6 +67,17 @@ def save_to_tempfile(image):
     return tempfile.name
 
 
+def hash_pokemon_name(pokemon_name):
+    ''' Returns a 7-letter hash for a pokemon's name, thus obscuring it. '''
+
+    b = pokemon_name.encode()
+    full_hash = hashlib.sha224(b).hexdigest()
+    small_hash = full_hash[-7:]
+
+    return small_hash
+
+
+
 def get_pokemon_and_image():
     ''' Gets pokemon name, id, and WTP images (shrouded and not)
 
@@ -84,8 +96,12 @@ def get_pokemon_and_image():
     poke_data = get_random_pokemon()
     #poke_data = {'name': 'Pikachu', 'id': '025'}
 
-    shrouded_path = f'{cachedir}/{poke_data["name"]}_shrouded.png'
-    unshrouded_path = f'{cachedir}/{poke_data["name"]}_unshrouded.png'
+    # Putting the real pokemon name as the filename allows Discord users to see
+    # what the pokemon is
+    name_hash = hash_pokemon_name(poke_data['name'])
+
+    shrouded_path = f'{cachedir}/{name_hash}_shrouded.png'
+    unshrouded_path = f'{cachedir}/{name_hash}_unshrouded.png'
 
     if cached_version_exists(poke_data, shrouded_path, unshrouded_path):
         shrouded_image = Image.open(shrouded_path)

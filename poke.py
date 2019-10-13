@@ -126,15 +126,15 @@ class Match():
         self.match_ended = True
 
         if nature == 'failure':
-            await self.send_message(f"It's {self.pokemon_name}!", section='end', file=discord.File(self.unshrouded_path))
+            await self.send_message(f"Time's up! It's {self.pokemon_name}!",
+                    section='end', file=discord.File(self.unshrouded_path))
+
         elif nature == 'success':
             await self.send_message(f"That's right, {winner.mention}! It's {self.pokemon_name}!",
                     section='end', file=discord.File(self.unshrouded_path))
 
         await self.messages['shrouded_image'].delete()
         del matches[self.channel.id]
-
-
 
 
 
