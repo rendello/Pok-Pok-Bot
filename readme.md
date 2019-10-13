@@ -17,4 +17,7 @@ And start a match with the `!poke` command!
 
 ---
 
+*This is in development and is subject to change. I am also fairly new to writing bots so
+please be careful with permissions and whatnot.*
+
 
