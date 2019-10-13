@@ -13,4 +13,8 @@ Add it to your server with:
 
 ``` Invite code will go here, but it's a WIP so not available atm ```
 
-And call a match with the `!poke` command!
+And start a match with the `!poke` command!
+
+---
+
+

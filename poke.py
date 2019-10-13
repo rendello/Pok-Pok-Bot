@@ -66,9 +66,11 @@ class Match():
         channel (discord.channel.TextChannel): The channel where the match is played.
         match_ended (bool): True if match is finished, False if not. Used to make sure
             endings only occur once per match.
+
         pokemon_name (str): The pokemon's name that players will guess at.
         unshrouded_path (str): The file path to the unshrouded WTP image.
         shrouded_path (str): The file path to the shrouded WTP image.
+
         messages (dict): Contains 'sections' as keys, and 'text' for each section as
             values. To be used by send_message and related functions.
     '''
@@ -124,11 +126,12 @@ class Match():
         self.match_ended = True
 
         if nature == 'failure':
-            await self.send_message(f"It's {self.pokemon_name}!", section='end')
+            await self.send_message(f"It's {self.pokemon_name}!", section='end', file=discord.File(self.unshrouded_path))
         elif nature == 'success':
-            await self.send_message(f"That's right, {winner.mention}! It's {self.pokemon_name}!", section='end')
+            await self.send_message(f"That's right, {winner.mention}! It's {self.pokemon_name}!",
+                    section='end', file=discord.File(self.unshrouded_path))
 
-        await self.send_message(file=discord.File(self.unshrouded_path), section='unshrouded_image')
+        await self.messages['shrouded_image'].delete()
         del matches[self.channel.id]
 
 
