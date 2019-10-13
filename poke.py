@@ -165,6 +165,7 @@ async def poke(ctx):
 
 @bot.command()
 async def d(ctx):
+    print(bot.guilds)
     print(matches)
 
 
