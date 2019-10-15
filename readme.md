@@ -7,6 +7,7 @@ The classic Pokémon guessing game. Simple and fun!
 **[\[ Add it to your server \]](https://discordapp.com/api/oauth2/authorize?client_id=616001226718314517&permissions=378944&scope=bot)**
 
 Command examples:
+
 | Command | Description |
 | --- | --- |
 | `!poke` | Starts a match |
