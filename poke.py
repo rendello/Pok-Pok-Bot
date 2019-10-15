@@ -52,7 +52,7 @@ def pokemon_in_text(*, text, pokemon_name):
     if len(text) > 100:
         return False
 
-    if fuzz.token_set_ratio(text, pokemon_name) > 90:
+    if fuzz.token_set_ratio(text, pokemon_name) > 83:
         return True
     return False
 
