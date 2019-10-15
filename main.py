@@ -7,6 +7,7 @@ import urllib.request
 from PIL import Image
 from pathlib import Path
 from tempfile import NamedTemporaryFile
+import random
 
 from Core.db_context_manager import dbopen
 
@@ -15,21 +16,25 @@ from Core.create_image import create_wtp_images
 
 cachedir = './Cache'
 
-def get_random_pokemon():
+def get_random_pokemon(generations):
     '''
     Args:
-        None
+        generations (list): Contains ints with the wanted generation number(s).
 
     Returns:
         pokemon: a <dict> with 'pokemon' (the creature's name <str>) and 'id' (its id <str>).
     '''
     with dbopen('Core/pokemon.db') as c:
+        gen = random.choice(generations)
 
         # Must use rowid, as id is technically text.
-        c.execute('SELECT MAX(rowid) FROM pokemon;')
+        c.execute('SELECT MIN(rowid) FROM pokemon WHERE gen=?;', [gen])
+        lowest_id = c.fetchone()[0]
+
+        c.execute('SELECT MAX(rowid) FROM pokemon WHERE gen=?;', [gen])
         highest_id = c.fetchone()[0]
 
-        pokemon_id = random.randint(1, highest_id)
+        pokemon_id = random.randint(lowest_id, highest_id)
         c.execute('SELECT pokemon, id FROM pokemon WHERE id=?;', [str(pokemon_id)])
         result = c.fetchone()
 
@@ -77,7 +82,7 @@ def hash_pokemon_name(pokemon_name):
     return small_hash
 
 
-def get_pokemon_and_image():
+def get_pokemon_and_image(generations):
     ''' Gets pokemon name, id, and WTP images (shrouded and not)
 
     Returns:
@@ -92,7 +97,7 @@ def get_pokemon_and_image():
                     'unshrouded_path': 'Cache/64f4cf1_unshrouded.png'
                 }
     '''
-    poke_data = get_random_pokemon()
+    poke_data = get_random_pokemon(generations)
     #poke_data = {'name': 'Pikachu', 'id': '025'} # Test case
 
     # Putting the real pokemon name as the filename allows Discord users to see

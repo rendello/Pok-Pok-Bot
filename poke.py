@@ -23,7 +23,7 @@ def clean_input_string(input_string):
         str: A string containing only the accepted characters.
     '''
     input_string = input_string.lower()
-    accepted_chars = 'abcdefghijklmnopqrstuvwxyz: '
+    accepted_chars = 'abcdefghijklmnopqrstuvwxyz: é'
     clean_string = str()
 
     for char in input_string:
@@ -57,6 +57,54 @@ def pokemon_in_text(*, text, pokemon_name):
     return False
 
 
+def extract_generations(generation_string):
+    ''' Extracts generations and ranges from strings in format 'n' or 'n-n'.
+
+    Args:
+        generation_string (str): String that might be in format 'n' or 'n-n', eg. if the
+            command is called like:
+            
+            !poke 1    -> [1]
+            !poke 3-6  -> [3, 4, 5, 6]
+            !poke      -> [1, 2, 3, 4, 5, 6, 7]
+            !poke blah -> [1, 2, 3, 4, 5, 6, 7]
+
+    Returns:
+        list: Holds the gen number, or range of gens, or empty.
+    '''
+
+    all_generations = [1, 2, 3, 4, 5, 6, 7]
+
+    if generation_string == 'all':
+        return all_generations
+
+    try:
+        generation = int(generation_string)
+        if generation in all_generations:
+            return [generation]
+    except ValueError:
+        pass
+
+    try:
+        lower_bound, upper_bound = [int(i) for i in generation_string.split('-')]
+
+        min_ = min(all_generations)
+        if lower_bound < min_:
+            lower_bound = min_
+
+        max_ = max(all_generations)
+        if upper_bound > max_:
+            upper_bound = max_
+
+        if upper_bound > lower_bound:
+            return [*range(lower_bound, upper_bound + 1)]
+
+    except ValueError:
+        pass
+
+    return all_generations
+
+
 
 # ---------- Classes -----------
 class Match():
@@ -64,6 +112,7 @@ class Match():
 
     Attributes:
         ctx (discord.ext.commands.context.Context): Discord context.
+        generations (list): The pokemon generation numbers that a user restricts the match to.
         server (discord.guild.Guild): The server where the playing channel is.
         channel (discord.channel.TextChannel): The channel where the match is played.
         match_ended (bool): True if match is finished, False if not. Used to make sure
@@ -76,13 +125,15 @@ class Match():
         messages (dict): Contains 'sections' as keys, and 'text' for each section as
             values. To be used by send_message and related functions.
     '''
-    def __init__(self, ctx):
+
+    def __init__(self, ctx, generation_string):
         self.ctx = ctx
+        self.generations = extract_generations(generation_string)
         self.server = ctx.guild
         self.channel = ctx.channel
         self.match_ended = False
 
-        poke_data = get_pokemon_and_image()
+        poke_data = get_pokemon_and_image(self.generations)
         self.pokemon_name = poke_data['name']
         self.unshrouded_path = poke_data['unshrouded_path']
         self.shrouded_path = poke_data['shrouded_path']
@@ -158,8 +209,8 @@ matches = {}
 
 # ---------- Commands ----------
 @bot.command()
-async def poke(ctx):
-    matches[ctx.message.channel.id] = Match(ctx)
+async def poke(ctx, *, generation_string='all'):
+    matches[ctx.message.channel.id] = Match(ctx, generation_string=generation_string)
     await matches[ctx.message.channel.id].start()
 
 
@@ -195,3 +246,5 @@ async def on_message(message):
 
 
 bot.run(client_secret)
+
+
