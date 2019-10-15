@@ -6,7 +6,12 @@ The classic Pokémon guessing game. Simple and fun!
 
 **[\[ Add it to your server \]](https://discordapp.com/api/oauth2/authorize?client_id=616001226718314517&permissions=378944&scope=bot)**
 
-And start a match with the `!poke` command!
+Command examples:
+| Command | Description |
+| --- | --- |
+| `!poke` | Starts a match |
+| `!poke 1` | Starts a match with generation 1 Pokémon only |
+| `!poke 4-7` | Starts a match with generations 4-7 Pokémon only |
 
 ## Demo
 ![Demo Video](Artwork/demo.webm)
@@ -14,6 +19,7 @@ And start a match with the `!poke` command!
 
 ## Features:
 - 100% Pokedex coverage
+- Selectable generations
 - Accurate silhouettes
 - Multi-user
 - Accepts typos
