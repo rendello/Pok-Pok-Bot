@@ -58,6 +58,9 @@ def pokemon_in_text(*, text, pokemon_name):
 def too_many_matches_on_server(server):
     global current_servers
 
+    if server is None:
+        return False
+
     if current_servers.count(server) >= 3:
         return True
 
@@ -188,7 +191,8 @@ class Match():
         global current_servers
         global current_users
 
-        current_servers.append(self.ctx.guild.id)
+        if self.ctx.guild is not None:
+            current_servers.append(self.ctx.guild.id)
         current_users.append(self.ctx.message.author.id)
 
         silly_intro_texts = [
@@ -227,7 +231,8 @@ class Match():
         await self.messages['shrouded_image'].delete()
 
         del matches[self.channel.id]
-        current_servers.remove(self.ctx.guild.id)
+        if self.ctx.guild is not None:
+            current_servers.remove(self.ctx.guild.id)
         current_users.remove(self.ctx.message.author.id)
 
 
@@ -251,7 +256,13 @@ bot.remove_command('help')
 @bot.command(aliases=['p'])
 async def poke(ctx, *, generation_string='all'):
 
-    if not too_many_matches_on_server(ctx.guild.id):
+    # Allows matches in DMs
+    if ctx.guild is None:
+        server = None
+    else:
+        server = ctx.guild.id
+
+    if not too_many_matches_on_server(server):
         if not too_many_matches_for_user(ctx.message.author.id):
 
             matches[ctx.message.channel.id] = Match(ctx, generation_string=generation_string)
