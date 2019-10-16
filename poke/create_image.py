@@ -40,6 +40,22 @@ def reduce_opacity(im, opacity):
 
 
 def opacity_friendly_paste(base_image, opacity_image, x, y):
+    ''' Pastes while preserving opacity information.
+
+    Normal paste cannot merge two images with opacity together. This function
+    abstracts the steps needed to allow that to happen. Returns a new image
+    instead of editing in place as normal Image.paste() does.
+
+    Args:
+        base_image (PIL.Image): The image to be pasted onto.
+        opacity_image (PIL.Image): The image to be pasted on top.
+        x (int): The x location of the pasting.
+        y (int): The y location of the pasting.
+
+    Returns:
+        PIL.Image: A composite of the two images.
+    '''
+
     base_width, base_height = base_image.size
 
     new_image = Image.new('RGBA', (base_width, base_height))
