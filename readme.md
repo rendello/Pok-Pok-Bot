@@ -23,9 +23,9 @@ Command examples:
 - Selectable generations
 - Accurate silhouettes
 - Multi-user
-- Accepts typos
+- Accepts typos and misspellings
 - DM-able
-- Won't make a mess of your channels!
+- Cleans up old messages (won't make a mess of your channels)!
 
 ---
 

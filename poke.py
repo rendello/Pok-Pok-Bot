@@ -76,10 +76,10 @@ def too_many_matches_for_user(user):
 
 
 def extract_generations(generation_string):
-    ''' Extracts generations and ranges from strings in format 'n' or 'n-n'.
+    ''' Extracts generations and ranges from strings in format 'n' or 'min-max'.
 
     Args:
-        generation_string (str): String that might be in format 'n' or 'n-n', eg. if the
+        generation_string (str): String that might be in format 'n' or 'min-max', eg. if the
             command is called like:
             
             !poke 1    -> [1]
@@ -93,9 +93,11 @@ def extract_generations(generation_string):
 
     all_generations = [1, 2, 3, 4, 5, 6, 7]
 
+    # string = 'all'
     if generation_string == 'all':
         return all_generations
 
+    # format = 'n'
     try:
         generation = int(generation_string)
         if generation in all_generations:
@@ -103,6 +105,7 @@ def extract_generations(generation_string):
     except ValueError:
         pass
 
+    # format = 'min-max'
     try:
         lower_bound, upper_bound = [int(i) for i in generation_string.split('-')]
 
@@ -207,6 +210,9 @@ class Match():
     async def end(self, nature, winner=str()):
         ''' Ends a match.
 
+        Sends a win or lose message, deletes the shrouded message, and deletes the match
+        reference in matches (also current_users and current_servers).
+
         Args:
             nature (str): 'success' if match won in time, 'failure' if not.
         '''
@@ -221,8 +227,8 @@ class Match():
                     section='end', file=discord.File(self.unshrouded_path))
 
         await self.messages['shrouded_image'].delete()
-        del matches[self.channel.id]
 
+        del matches[self.channel.id]
         current_servers.remove(self.ctx.guild.id)
         current_users.remove(self.ctx.message.author.id)
 
