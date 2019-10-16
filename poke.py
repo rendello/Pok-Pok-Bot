@@ -57,6 +57,24 @@ def pokemon_in_text(*, text, pokemon_name):
     return False
 
 
+def too_many_matches_on_server(server):
+    global current_servers
+
+    if current_servers.count(server) >= 3:
+        return True
+
+    return False
+
+
+def too_many_matches_for_user(user):
+    global current_users
+
+    if current_users.count(user) >= 1:
+        return True
+
+    return False
+
+
 def extract_generations(generation_string):
     ''' Extracts generations and ranges from strings in format 'n' or 'n-n'.
 
@@ -166,6 +184,12 @@ class Match():
 
 
     async def start(self):
+        global current_servers
+        global current_users
+
+        current_servers.append(self.ctx.guild.id)
+        current_users.append(self.ctx.message.author.id)
+
         silly_intro_texts = [
             "Do you wanna be the very best?! Then see how you fair in a match of",
             "Are you ready for",
@@ -199,19 +223,33 @@ class Match():
         await self.messages['shrouded_image'].delete()
         del matches[self.channel.id]
 
+        current_servers.remove(self.ctx.guild.id)
+        current_users.remove(self.ctx.message.author.id)
+
 
 
 # ---------- Globals -----------
 bot = commands.Bot(command_prefix="!")
+
 matches = {}
+
+# Used to limit user / server matches so they don't spam commands and cause an
+# 'amplified DOS' attack
+current_servers = []
+current_users = []
 
 
 
 # ---------- Commands ----------
 @bot.command()
 async def poke(ctx, *, generation_string='all'):
-    matches[ctx.message.channel.id] = Match(ctx, generation_string=generation_string)
-    await matches[ctx.message.channel.id].start()
+
+    if not too_many_matches_on_server(ctx.guild.id):
+        if not too_many_matches_for_user(ctx.message.author.id):
+
+            matches[ctx.message.channel.id] = Match(ctx, generation_string=generation_string)
+            await matches[ctx.message.channel.id].start()
+
 
 
 @bot.command()
@@ -245,6 +283,6 @@ async def on_message(message):
 
 
 
-bot.run(client_secret)
-
-
+# ------- Program Start --------
+if __name__ == '__main__':
+    bot.run(client_secret)
