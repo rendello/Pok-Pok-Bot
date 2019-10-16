@@ -70,7 +70,7 @@ def resize(img, new_width):
 
 def put_figure_on_template(figure):
     figure = resize(figure, 200)
-    bg = Image.open('Core/template.png')
+    bg = Image.open('template.png')
     bg = opacity_friendly_paste(bg, figure, 30, 30)
     return bg
 

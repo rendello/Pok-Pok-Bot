@@ -8,13 +8,15 @@ from PIL import Image
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 import random
+import yaml
 
-from Core.db_context_manager import dbopen
+from db_context_manager import dbopen
+from create_image import create_wtp_images
 
-from Core.create_image import create_wtp_images
+config_dir = Path.cwd().parent.joinpath('config.yaml')
+config = yaml.safe_load(open(config_dir))
 
-
-cachedir = './Cache'
+cachedir = config['cachedir']
 
 def get_random_pokemon(generations):
     '''
@@ -24,7 +26,7 @@ def get_random_pokemon(generations):
     Returns:
         pokemon: a <dict> with 'pokemon' (the creature's name <str>) and 'id' (its id <str>).
     '''
-    with dbopen('Core/pokemon.db') as c:
+    with dbopen('pokemon.db') as c:
         gen = random.choice(generations)
 
         # Must use rowid, as id is technically text.
@@ -93,8 +95,8 @@ def get_pokemon_and_image(generations):
                 {
                     'name': 'Pikachu',
                     'id': '025',
-                    'shrouded_path': 'Cache/64f4cf1_shrouded.png',
-                    'unshrouded_path': 'Cache/64f4cf1_unshrouded.png'
+                    'shrouded_path': '<cache directory>/64f4cf1_shrouded.png',
+                    'unshrouded_path': '<cache directory>/64f4cf1_unshrouded.png'
                 }
     '''
     poke_data = get_random_pokemon(generations)

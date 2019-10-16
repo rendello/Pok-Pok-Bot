@@ -7,9 +7,7 @@ from discord.ext import commands
 
 import random
 
-from main import get_pokemon_and_image
-from Core.secret_token import client_secret
-
+from helpers import get_pokemon_and_image, config
 
 
 # ------ User functions --------
@@ -235,6 +233,7 @@ class Match():
 
 
 # ---------- Globals -----------
+client_secret = open(config['token_dir']).read().replace('\n', '')
 bot = commands.Bot(command_prefix="!")
 
 matches = {}
