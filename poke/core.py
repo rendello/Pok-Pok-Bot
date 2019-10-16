@@ -260,9 +260,11 @@ async def poke(ctx, *, generation_string='all'):
 
 @bot.command(aliases=['h', 'poke-help', 'poke-h'])
 async def help(ctx):
-    await ctx.channel.send('```Pokebot is the "Who\'s That Pokemon" bot!\n'
-            + 'Type !poke to start up a match (anyone can play). If you want to specify, say, generation one, use '
-            + '!poke 1, or if you want generations two through four, use !poke 2-4 :D```')
+    await ctx.channel.send('```Pokebot is the "Who\'s That Pokemon" bot!\n\n'
+            + '!poke       Play a match\n'
+            + '!poke 1     Only use generation 1 Pokemon\n'
+            + '!poke 2-4   Use generations 2 through 4\n\n'
+            + '!poke-help  Show this dialogue.```')
 
 
 @bot.command()
