@@ -246,7 +246,9 @@ current_users = []
 
 
 # ---------- Commands ----------
-@bot.command()
+bot.remove_command('help')
+
+@bot.command(aliases=['p'])
 async def poke(ctx, *, generation_string='all'):
 
     if not too_many_matches_on_server(ctx.guild.id):
@@ -255,6 +257,12 @@ async def poke(ctx, *, generation_string='all'):
             matches[ctx.message.channel.id] = Match(ctx, generation_string=generation_string)
             await matches[ctx.message.channel.id].start()
 
+
+@bot.command(aliases=['h', 'poke-help', 'poke-h'])
+async def help(ctx):
+    await ctx.channel.send('```Pokebot is the "Who\'s That Pokemon" bot!\n'
+            + 'Type !poke to start up a match (anyone can play). If you want to specify, say, generation one, use '
+            + '!poke 1, or if you want generations two through four, use !poke 2-4 :D```')
 
 
 @bot.command()
