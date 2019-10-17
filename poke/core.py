@@ -127,6 +127,22 @@ def extract_generations(generation_string):
     return all_generations
 
 
+async def change_status_task(primary_status, secondary_statuses):
+    ''' Replaces the primary status with secondary ones ar small intervals.
+
+    Args:
+        primary_status (str): The 'game' that will be shown as a Discord status most often.
+        secondary_statuses (list): Strings containing less important statuses.
+    '''
+
+    while True:
+        for secondary_status in secondary_statuses:
+            await bot.change_presence(activity=discord.Game('!poke  |  !poke-help'))
+            await asyncio.sleep(30)
+            await bot.change_presence(activity=discord.Game(secondary_status))
+            await asyncio.sleep(10)
+
+
 
 # ---------- Classes -----------
 class Match():
@@ -249,6 +265,12 @@ matches = {}
 current_servers = []
 current_users = []
 
+primary_status = '!poke | !poke-help'
+secondary_statuses = [
+    "Who's That Pokemon?",
+    "gitlab.com/rendello/",
+    "!poke-help for help",
+]
 
 
 # ---------- Commands ----------
@@ -289,7 +311,7 @@ async def d(ctx):
 # ----------- Events -----------
 @bot.event
 async def on_ready():
-    await bot.change_presence(activity=discord.Game('!poke  |  !poke-help'))
+    await bot.loop.create_task(change_status_task(primary_status, secondary_statuses))
 
 
 @bot.event
