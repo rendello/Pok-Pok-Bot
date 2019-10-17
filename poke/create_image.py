@@ -5,10 +5,18 @@ import numpy as np
 
 
 def poke_png_to_sillhouette(image_path, color_tuple):
-    ''' Flattens all non transparent pixels.
+    ''' Flattens all non transparent pixels into an RGB color.
 
-        Code modified from this thread: https://stackoverflow.com/a/3753428
+    Code modified from this thread: https://stackoverflow.com/a/3753428
+
+    Args:
+        image_path (string): The path of the image to be flattened.
+        color_tuple (tuple): The RGB components from 0-255.
+
+    Returns:
+        PIL.Image: A flattened silhouette of the image.
     '''
+
     im = Image.open(image_path)
     im = im.convert('RGBA')
 
@@ -26,7 +34,7 @@ def poke_png_to_sillhouette(image_path, color_tuple):
 def reduce_opacity(im, opacity):
     """ Returns an image with reduced opacity.
 
-        Modified from http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/362879
+    Modified from http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/362879
     """
     assert opacity >= 0 and opacity <= 1
     if im.mode != 'RGBA':
@@ -65,6 +73,16 @@ def opacity_friendly_paste(base_image, opacity_image, x, y):
 
 
 def create_figure(poke_image):
+    ''' Creates a pokemon's silhouette from its original image.
+
+    Args:
+        poke_image (PIL.Image): A picture of a pokemon with a transparent background.
+
+    Returns:
+        figure (PIL.Image): A full shrouded image of the pokemon, combining
+            multiple silhouettes.
+    '''
+
     figure = poke_png_to_sillhouette(poke_image, (0, 0, 0))
     figure = reduce_opacity(figure, 0.5)
 
@@ -77,7 +95,10 @@ def create_figure(poke_image):
 
 
 def resize(img, new_width):
-    ''' Modified from: https://opensource.com/life/15/2/resize-images-python. '''
+    ''' Scales an image according to width.
+    
+    Modified from: https://opensource.com/life/15/2/resize-images-python.
+    '''
     wpercent = (new_width / float(img.size[0]))
     hsize = int((float(img.size[1]) * float(wpercent)))
     img = img.resize((new_width, hsize), Image.ANTIALIAS)
