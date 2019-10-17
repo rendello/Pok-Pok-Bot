@@ -32,4 +32,5 @@ Command examples:
 *This is in development and is subject to change. I am also fairly new to writing bots so
 please be careful with permissions and whatnot.*
 
-
+---
+*Gaven Rendell (Rendello) - Join the Discord server: https://discord.gg/7RGwBmU !*
