@@ -239,6 +239,7 @@ class Match():
 
 # ---------- Globals -----------
 client_secret = open(config['token_dir']).read().replace('\n', '')
+
 bot = commands.Bot(command_prefix="!")
 
 matches = {}
@@ -286,6 +287,11 @@ async def d(ctx):
 
 
 # ----------- Events -----------
+@bot.event
+async def on_ready():
+    await bot.change_presence(activity=discord.Game('!poke  |  !poke-help'))
+
+
 @bot.event
 async def on_message(message):
     ''' Checks for pokemon in messages after matches have been called.
