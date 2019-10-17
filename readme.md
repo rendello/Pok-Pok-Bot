@@ -33,4 +33,4 @@ Command examples:
 please be careful with permissions and whatnot.*
 
 ---
-*Gaven Rendell (Rendello) - Join the Discord server: https://discord.gg/7RGwBmU !*
+*Gaven Rendell (Rendello) - Join the Discord server: https://discord.gg/6RGwBmU !*
