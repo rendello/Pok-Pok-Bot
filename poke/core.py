@@ -143,6 +143,17 @@ async def change_status_task(primary_status, secondary_statuses):
             await asyncio.sleep(10)
 
 
+async def can_start_match(server_id, channel_id, user_id):
+    ''' Checks if a requested match can be started. '''
+    global matches
+
+    if channel_id not in matches:
+        if not too_many_matches_on_server(server_id):
+            if not too_many_matches_for_user(user_id):
+                return True
+    return False
+
+
 
 # ---------- Classes -----------
 class Match():
@@ -273,23 +284,21 @@ secondary_statuses = [
 ]
 
 
+
 # ---------- Commands ----------
 bot.remove_command('help')
 
 @bot.command(aliases=['p'])
 async def poke(ctx, *, generation_string='all'):
 
-    # Allows matches in DMs
-    if ctx.guild is None:
-        server = None
-    else:
-        server = ctx.guild.id
+    # No server or channel IDs when being DM-ed
+    server_id = ctx.guild.id if ctx.guild is not None else None
+    channel_id = ctx.channel.id if ctx.channel is not None else None
 
-    if not too_many_matches_on_server(server):
-        if not too_many_matches_for_user(ctx.message.author.id):
+    if await can_start_match(server_id=server_id, channel_id=channel_id, user_id=ctx.message.author.id):
 
-            matches[ctx.message.channel.id] = Match(ctx, generation_string=generation_string)
-            await matches[ctx.message.channel.id].start()
+        matches[ctx.message.channel.id] = Match(ctx, generation_string=generation_string)
+        await matches[ctx.message.channel.id].start()
 
 
 @bot.command(aliases=['h', 'poke-help', 'poke-h'])
