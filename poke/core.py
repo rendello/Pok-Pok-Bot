@@ -214,6 +214,20 @@ class Match():
             await self.end('failure')
 
 
+    async def ask_to_cancel(self, trigger_message):
+        ''' Starts a cancellation timer to end match, allows users to cancel cancellation.
+
+        Args:
+            trigger_message (str): The message that triggered the cancellation process.
+        '''
+
+        message_text = 'Cancelling match in 5 seconds. React to stop cancellation.'
+        await self.send_message(f"> {trigger_message}\n{message_text}", section='cancel_dialogue')
+        await asyncio.sleep(5)
+        await self.messages['cancel_dialogue'].delete()
+        await self.end('failure')
+
+
     async def start(self):
         global current_servers
         global current_users
@@ -340,9 +354,23 @@ async def on_message(message):
 
         if pokemon_in_text(text=clean_message, pokemon_name=match.pokemon_name):
             await match.end('success', winner=message.author)
+        elif any(word in clean_message for word in ['cancel', 'idk']):
+            await match.ask_to_cancel(trigger_message=message.content)
 
     # Stops on_message from blocking all other commands.
     await bot.process_commands(message)
+
+
+@bot.event
+async def on_reaction_add(reaction, user):
+    global matches
+
+    if reaction.message.channel.id in matches.keys():
+        match = matches[reaction.message.channel.id]
+
+        if 'cancel_dialogue' in match.messages:
+            if reaction.message.id == match.messages['cancel_dialogue'].id:
+                print(reaction)
 
 
 
