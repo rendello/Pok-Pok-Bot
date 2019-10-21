@@ -226,7 +226,8 @@ class Match():
         # If a cancellation has already been vetoed, no use calling another cancellation
         # when there's so little time in a match anyway.
         if self.cancellation_aborted == False:
-            message_text = 'Cancelling match in 5 seconds. Press on ❌ react to stop cancellation.'
+            message_text = '```Cancelling match in 5 seconds. Press on ❌ react to stop cancellation.\n' \
+                    '(cancellations can only be called once per match).```'
             await self.send_message(f"> {trigger_message}\n{message_text}", section='cancel_dialogue')
             await self.messages['cancel_dialogue'].add_reaction('❌')
             await asyncio.sleep(5)
@@ -328,7 +329,8 @@ async def help(ctx):
             + '!poke       Play a match\n'
             + '!poke 1     Only use generation 1 Pokemon\n'
             + '!poke 2-4   Use generations 2 through 4\n\n'
-            + '!poke-help  Show this dialogue.```')
+            + '!poke-help  Show this dialogue\n\n'
+            + 'type "cancel" or "idk" to cancel a match.```')
 
 
 @bot.command()
