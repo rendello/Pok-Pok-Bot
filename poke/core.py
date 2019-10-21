@@ -166,6 +166,7 @@ class Match():
         channel (discord.channel.TextChannel): The channel where the match is played.
         match_ended (bool): True if match is finished, False if not. Used to make sure
             endings only occur once per match.
+        cancellation_aborted (bool): If a match's cancellation has been aborted.
 
         pokemon_name (str): The pokemon's name that players will guess at.
         unshrouded_path (str): The file path to the unshrouded WTP image.
@@ -181,6 +182,7 @@ class Match():
         self.server = ctx.guild
         self.channel = ctx.channel
         self.match_ended = False
+        self.cancellation_aborted = False
 
         poke_data = get_pokemon_and_image(self.generations)
         self.pokemon_name = poke_data['name']
@@ -212,6 +214,25 @@ class Match():
 
         if not self.match_ended:
             await self.end('failure')
+
+
+    async def ask_to_cancel(self, trigger_message):
+        ''' Starts a cancellation timer to end match, allows users to cancel cancellation.
+
+        Args:
+            trigger_message (str): The message that triggered the cancellation process.
+        '''
+
+        # If a cancellation has already been vetoed, no use calling another cancellation
+        # when there's so little time in a match anyway.
+        if self.cancellation_aborted == False:
+            message_text = 'Cancelling match in 5 seconds. Press on ❌ react to stop cancellation.'
+            await self.send_message(f"> {trigger_message}\n{message_text}", section='cancel_dialogue')
+            await self.messages['cancel_dialogue'].add_reaction('❌')
+            await asyncio.sleep(5)
+            await self.messages['cancel_dialogue'].delete()
+            if self.cancellation_aborted == False:
+                await self.end('failure')
 
 
     async def start(self):
@@ -340,9 +361,27 @@ async def on_message(message):
 
         if pokemon_in_text(text=clean_message, pokemon_name=match.pokemon_name):
             await match.end('success', winner=message.author)
+        elif any(word in clean_message for word in ['cancel', 'idk']):
+            await match.ask_to_cancel(trigger_message=message.content)
 
     # Stops on_message from blocking all other commands.
     await bot.process_commands(message)
+
+
+@bot.event
+async def on_reaction_add(reaction, user):
+    global matches
+
+    # All deals with reacting to cancellation messages
+    if reaction.message.channel.id in matches.keys() and user.id != bot.user.id:
+        match = matches[reaction.message.channel.id]
+
+        if 'cancel_dialogue' in match.messages:
+            if reaction.message.id == match.messages['cancel_dialogue'].id:
+                match.cancellation_aborted = True
+
+                # Bad
+                await match.send_message('Cancellation aborted. ', section='cancel_dialogue')
 
 
 
