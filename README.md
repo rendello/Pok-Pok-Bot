@@ -1,7 +1,7 @@
 
 # Poké Poké: *Who's That Pokémon* for Discord!
-![header](Artwork/header.png "header")
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+![header](Artwork/header.png "header")
 
 The classic Pokémon guessing game. Simple and fun!
 
