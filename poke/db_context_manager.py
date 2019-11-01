@@ -1,16 +1,18 @@
 #!/usr/bin/python3.6
 
-'''
+"""
 Gist: https://gist.github.com/miku/6522074
 Author: Martin Czygan (@miku)
-'''
+"""
 
 import sqlite3
+
 
 class dbopen(object):
     """
     Simple CM for sqlite3 databases. Commits everything at exit.
     """
+
     def __init__(self, path):
         self.path = path
         self.conn = None
