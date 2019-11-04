@@ -137,7 +137,9 @@ async def change_status_task(primary_status, secondary_statuses):
 
     while True:
         for secondary_status in secondary_statuses:
-            await bot.change_presence(activity=discord.Game(f"{primary_status} | {secondary_status}"))
+            await bot.change_presence(
+                activity=discord.Game(f"{primary_status} | {secondary_status}")
+            )
             await asyncio.sleep(15)
 
 
@@ -315,7 +317,7 @@ secondary_statuses = [
     "Who's That Pokemon?",
     "gitlab.com/rendello/poke-poke-bot",
     "!poke-help",
-    "!poke-link to add me!"
+    "!poke-link to add me!",
 ]
 
 
@@ -349,7 +351,7 @@ async def help(ctx):
         + "!poke 2-4   Use generations 2 through 4\n\n"
         + "!poke-help  Show this dialogue\n"
         + "!poke-link  Add me to your server!\n\n"
-        + '------------------------------------------\n'
+        + "------------------------------------------\n"
         + 'type "cancel" or "idk" to cancel a match.```'
     )
 
@@ -357,7 +359,6 @@ async def help(ctx):
 @bot.command(aliases=["poke-link", "poke-l", "p-link", "pl"])
 async def pokelink(ctx):
     await ctx.channel.send(f"Add me to your server with this link! ||{link}||")
-
 
 
 @bot.command()
