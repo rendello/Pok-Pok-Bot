@@ -137,10 +137,8 @@ async def change_status_task(primary_status, secondary_statuses):
 
     while True:
         for secondary_status in secondary_statuses:
-            await bot.change_presence(activity=discord.Game("!poke  |  !poke-help"))
-            await asyncio.sleep(30)
-            await bot.change_presence(activity=discord.Game(secondary_status))
-            await asyncio.sleep(10)
+            await bot.change_presence(activity=discord.Game(f"{primary_status} | {secondary_status}"))
+            await asyncio.sleep(15)
 
 
 async def can_start_match(server_id, channel_id, user_id):
@@ -286,6 +284,13 @@ class Match:
 
         await self.messages["shrouded_image"].delete()
 
+        # Don't want the 'plugs' to be excessive
+        if random.randint(30) == 11:
+            await self.send_message(
+                f"Random plug! Add Poké Poké to your server with this link (if you want!): ||{link}||",
+                section="plug",
+            )
+
         del matches[self.channel.id]
         if self.ctx.guild is not None:
             current_servers.remove(self.ctx.guild.id)
@@ -294,6 +299,7 @@ class Match:
 
 # ---------- Globals -----------
 client_secret = open(config["token_dir"]).read().replace("\n", "")
+link = "https://discordapp.com/api/oauth2/authorize?client_id=616001226718314517&permissions=378944&scope=bot"
 
 bot = commands.Bot(command_prefix="!")
 
@@ -304,11 +310,12 @@ matches = {}
 current_servers = []
 current_users = []
 
-primary_status = "!poke | !poke-help"
+primary_status = "!poke"
 secondary_statuses = [
     "Who's That Pokemon?",
-    "gitlab.com/rendello/",
-    "!poke-help for help",
+    "gitlab.com/rendello/poke-poke-bot",
+    "!poke-help",
+    "!poke-link to add me!"
 ]
 
 
@@ -333,16 +340,24 @@ async def poke(ctx, *, generation_string="all"):
         await matches[ctx.message.channel.id].start()
 
 
-@bot.command(aliases=["h", "poke-help", "poke-h"])
+@bot.command(aliases=["h", "poke-help", "poke-h", "p-help"])
 async def help(ctx):
     await ctx.channel.send(
         '```Pokebot is the "Who\'s That Pokemon" bot!\n\n'
         + "!poke       Play a match\n"
         + "!poke 1     Only use generation 1 Pokemon\n"
         + "!poke 2-4   Use generations 2 through 4\n\n"
-        + "!poke-help  Show this dialogue\n\n"
+        + "!poke-help  Show this dialogue\n"
+        + "!poke-link  Add me to your server!\n\n"
+        + '------------------------------------------\n'
         + 'type "cancel" or "idk" to cancel a match.```'
     )
+
+
+@bot.command(aliases=["poke-link", "poke-l", "p-link", "pl"])
+async def pokelink(ctx):
+    await ctx.channel.send(f"Add me to your server with this link! ||{link}||")
+
 
 
 @bot.command()
