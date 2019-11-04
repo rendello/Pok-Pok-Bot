@@ -285,7 +285,7 @@ class Match:
         await self.messages["shrouded_image"].delete()
 
         # Don't want the 'plugs' to be excessive
-        if random.randint(30) == 11:
+        if random.randint(0, 30) == 11:
             await self.send_message(
                 f"Random plug! Add Poké Poké to your server with this link (if you want!): ||{link}||",
                 section="plug",
